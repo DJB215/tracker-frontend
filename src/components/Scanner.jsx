@@ -28,7 +28,7 @@ const Scanner = (props) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const url = 'http://ec2-54-160-246-209.compute-1.amazonaws.com:8080/api/tests'
+        const url = 'https://ec2-54-160-246-209.compute-1.amazonaws.com:8080/api/tests'
            
         const requestOptions = {
             method: 'POST',
