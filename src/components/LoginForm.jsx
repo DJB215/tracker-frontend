@@ -17,7 +17,6 @@ import {
 
 const LoginForm = (props) => {
     const values = props.values;
-    console.log('Props passed to form: ', props);
 
     const theme = createTheme();
 
