@@ -16,6 +16,8 @@ import {
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import BarcodeScannerComponent from 'react-webcam-barcode-scanner2';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const Scanner = (props) => {
     const history = useHistory();
@@ -24,11 +26,13 @@ const Scanner = (props) => {
 
     let EinsteinID = history.location.state.loginId;
 
+    const MySwal = withReactContent(Swal);
+
     const theme = createTheme();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const url = 'https://ec2-54-160-246-209.compute-1.amazonaws.com:8080/api/tests'
+        const url = 'http://localhost:4000/api/tests'
            
         const requestOptions = {
             method: 'POST',
@@ -36,12 +40,36 @@ const Scanner = (props) => {
             body: JSON.stringify({ EinsteinID, CovidTestCode, TestResult })
         };
 
-        fetch(url, requestOptions)
-            .then(response => history.push('/thanks'))
-            .catch(error => {
-                alert('There was a problem when you submitted your test.')
-                console.log(error)
-            });
+        if (document.getElementById('CovidTestCode').value === 'Not Found') {
+            MySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'You must scan the QR Code from the swab packaging to continue'
+            })
+        } else if (TestResult === '' || TestResult === 'None') {
+            MySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'You must enter your test result.'
+            })
+        } else {
+            fetch(url, requestOptions)
+                .then(response => {
+                    MySwal.fire({
+                        icon: 'success',
+                        title: 'Test Result Submitted',
+                        text: 'Your test result was submitted successfully!'
+                    })
+                })
+                .catch(error => {
+                    MySwal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'There was a problem when you submitted your test result.'
+                    })
+                    console.log(error)
+                });
+        }
     };
 
     const handleChangeResult = (event) => {

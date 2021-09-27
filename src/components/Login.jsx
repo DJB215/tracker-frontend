@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 import LoginForm from './LoginForm';
 import VerifyForm from './VerifyForm';
+
 
 const Login = () => {
     const [activeStep, setActiveStep] = useState(0);
@@ -9,12 +12,22 @@ const Login = () => {
 
     const history = useHistory();
 
+    const MySwal = withReactContent(Swal);
+
     const steps = ['Einstein Login ID', 'Verification Code'];
 
     const handleNextLogin = (e) => {
         e.preventDefault();
         setLoginId(document.getElementById('EinsteinId').value);
-        setActiveStep(activeStep + 1 );
+        if (document.getElementById('EinsteinId').value === '') {
+            MySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'You must enter your Einstein Login ID to continue'
+            })
+        } else {
+            setActiveStep(activeStep + 1 );
+        }
     }
 
     const handleNextVerify = (e) => {
@@ -28,7 +41,11 @@ const Login = () => {
                 state: { loginId: values.loginId }
             });
         } else {
-            alert("The verification code you entered did not match the verification code that was sent to you. Please try again.")
+            MySwal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'The verification code you entered did not match the verification code that was sent to you. Please try again.'
+            })
         }
         
     }
@@ -39,6 +56,8 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log(e);
+        
         console.log(e.target.value, loginId)
     }
 
